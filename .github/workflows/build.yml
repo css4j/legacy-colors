@@ -1,0 +1,61 @@
+# Build workflow
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  # Validate wrapper to prevent potential supply chain attack
+  gradle-wrapper-validation:
+
+    runs-on: ubuntu-latest
+
+    name: Validate Gradle wrapper
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/actions/wrapper-validation@v3
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java: [ '11', '21' ]
+
+    name: Java ${{ matrix.java }} build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Set JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      # Build
+      - name: Build with Gradle
+        run: >-
+          ./gradlew build
+
+      # Upload test artifact
+      - name: Upload test output
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: test-output-${{ matrix.java }}
+          path: |
+            build/reports/tests/test/
+          retention-days: 30
+          overwrite: true

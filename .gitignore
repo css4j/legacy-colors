@@ -1,0 +1,11 @@
+*~
+.classpath
+.project
+.settings
+/bin/
+**/build/
+/.idea
+/.vscode/
+/.gradle
+/buildSrc/.gradle
+/CHANGES.txt
