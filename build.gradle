@@ -115,7 +115,7 @@ tasks.withType(Javadoc) {
 }
 
 tasks.register('lineEndingConvCopy', CRLFConvertCopy) {
-	description 'Convert LICENSE and NOTICE to Windows line endings'
+	description = 'Convert LICENSE and NOTICE to Windows line endings'
 	from "$rootDir/LICENSE"
 	from "$rootDir/NOTICE"
 }
